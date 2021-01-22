@@ -35,7 +35,7 @@
       <p><b id="counter-live">0 people</b> see this right now</p>
       <p><b id="counter-today">0 people</b> saw this today</p>
       <p><b id="counter-total">0 people</b> saw this in total</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Show / Hide Visitor List</a>
+      <a target="_blank" href="">Show / Hide Visitor List</a>
     </div>
     <p id="load">Loading...</p>
 
@@ -87,6 +87,10 @@
           getNumDailyUsers()
         }, 10000);
 
+        var timerID = setInterval(function() {
+          getNumTotalUsers()
+        }, 10000);
+
         function writeUserLiveData(userID, secs1) {
           var d = new Date();
           d.setSeconds(secs1);
@@ -128,6 +132,21 @@
           });
         }
 
+        function getNumTotalUsers() {
+          var d = new Date();
+          d.setHours(0);
+          d.setMinutes(0);
+          d.setSeconds(0);
+          d = d.toGMTString();
+          console.log(d + "-read-total")
+          var ref = firebase.database().ref("total/" + d);
+          ref.once("value").then(function(snapshot) {
+            console.log("num total users:" + snapshot.numChildren());
+            total_counter = document.getElementById('counter-total');
+            total_counter.textContent = snapshot.numChildren() + " people";
+          });
+        }
+
         var d = new Date();      
         secs = d.getSeconds();
         console.log(d + "-write-live")
@@ -161,6 +180,11 @@
           [getCookie("userID")]: 0
         });
         getNumDailyUsers()
+        console.log(d + "-write-total")
+        var ref = firebase.database().ref('total/' + d).update({
+          [getCookie("userID")]: 0
+        });
+        getNumTotalUsers()
 
       });
     </script>
