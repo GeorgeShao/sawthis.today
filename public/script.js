@@ -14,8 +14,24 @@ function getCookie(cname) {
   return "";
 }
 
-function writeUserData(userId, name, email, imageUrl) {
-  firebase.database().ref('live/' + userId).set({
+var timerID = setInterval(function() {
+  var d = new Date(); // for now
+  hours = d.getHours(); // => 9
+  mins = d.getMinutes(); // => 30
+  secs  d.getSeconds(); // => 51
+  if (seconds == 1){
+    writeUserData(getCookie("userID"))
+  }
+  console.log(seconds)
+}, 1000);
+
+console.log("TADA")
+
+function writeUserData(userID) {
+  var d = new Date();
+  print(d)
+  firebase.database().ref('live/' + userID).set({
+    time: new Date(),
     username: name,
     email: email,
     profile_picture : imageUrl
