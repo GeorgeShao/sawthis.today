@@ -133,13 +133,8 @@
         }
 
         function getNumTotalUsers() {
-          var d = new Date();
-          d.setHours(0);
-          d.setMinutes(0);
-          d.setSeconds(0);
-          d = d.toGMTString();
-          console.log(d + "-read-total")
-          var ref = firebase.database().ref("total/" + d);
+          console.log("-read-total")
+          var ref = firebase.database().ref("total");
           ref.once("value").then(function(snapshot) {
             console.log("num total users:" + snapshot.numChildren());
             total_counter = document.getElementById('counter-total');
@@ -180,8 +175,9 @@
           [getCookie("userID")]: 0
         });
         getNumDailyUsers()
-        console.log(d + "-write-total")
-        var ref = firebase.database().ref('total/' + d).update({
+
+        console.log("-write-total")
+        var ref = firebase.database().ref('total').update({
           [getCookie("userID")]: 0
         });
         getNumTotalUsers()
