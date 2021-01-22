@@ -61,7 +61,7 @@
       </table>
 
     </div>
-    <p id="load">Loading...</p>
+    <pre><p id="load">Loading...</p></pre>
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -82,7 +82,7 @@
         try {
           firebase.app();
           firebase.analytics();
-          loadEl.textContent = `Database successfully loaded.`;
+          loadEl.textContent = `Database successfully loaded.\nFields update every 10 seconds.\nVisitor list updates real-time.`;
         } catch (e) {
           console.error(e);
           loadEl.textContent = 'Database failed to load.';
