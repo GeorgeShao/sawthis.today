@@ -55,7 +55,7 @@
         <tbody>
           <tr>
             <td scope="row">69420</th>
-            <td scope="row">Fri, 69 Jan 4200 69:69:69 GMT</td>
+            <td scope="row">Fri Jan 69 4200 69:69:69</td>
           </tr>
         </tbody>
       </table>
@@ -185,8 +185,8 @@
               var cell2 = row.insertCell(1);
               cell1.innerHTML = child.val();
               d = new Date(parseInt(child.key))
-              d = d.toGMTString();
-              console.error(d)
+              d = d.toString();
+              d = d.substring(0,d.indexOf("GMT")-1)
               cell2.innerHTML = d;
             });
           });
