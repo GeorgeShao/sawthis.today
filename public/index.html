@@ -11,7 +11,6 @@
     <script src="/__/firebase/8.2.4/firebase-database.js"></script>
     <script src="/__/firebase/8.2.4/firebase-analytics.js"></script>
     <script src="/__/firebase/init.js"></script>
-    <script src="/script.js"></script>
 
     <style media="screen">
       body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -69,17 +68,15 @@
           }
           return "";
         }
-
+        
         var timerID = setInterval(function() {
           var d = new Date();
-          hours = d.getHours();
-          mins = d.getMinutes();
           secs = d.getSeconds();
           if (secs == 0 || secs == 10 || secs == 20 || secs == 30 || secs == 40 || secs == 50){
             writeUserData(getCookie("userID"), secs)
           }
           if (secs == 5 || secs == 15 || secs == 25 || secs == 35 || secs == 45 || secs == 55){
-            getNumLiveUsers(secs)
+            getNumLiveUsers(secs);
           }
           console.log(secs)
         }, 1000);
@@ -89,25 +86,46 @@
           d.setSeconds(secs1);
           d = d.toGMTString();
           console.log(d + "-write")
-          var postListRef = firebase.database().ref('live/' + d)
-          var newPostRef = postListRef.push();
-          newPostRef.set({
-            userID: userID
+          var postListRef = firebase.database().ref('live/' + d).update({
+            [userID]: 0
           });
         }
 
-        function getNumLiveUsers(secs1) {
+        function getNumLiveUsers(secs1, loadtype) {
           var d = new Date();
           d.setSeconds(secs1-5);
           d = d.toGMTString();
           console.log(d + "-read")
           var ref = firebase.database().ref("live/" + d);
           ref.once("value").then(function(snapshot) {
-            console.log("num live users:" + snapshot.numChildren());
-            live_counter = document.getElementById('counter-live');
-            live_counter.textContent = snapshot.numChildren();
+            if (loadtype == "firstload"){
+              console.log("num live users:" + (parseInt(snapshot.numChildren()) + 1));
+              live_counter = document.getElementById('counter-live');
+              live_counter.textContent = (parseInt(snapshot.numChildren()) + 1) + " people";
+            } else {
+              console.log("num live users:" + snapshot.numChildren());
+              live_counter = document.getElementById('counter-live');
+              live_counter.textContent = snapshot.numChildren() + " people";
+            }
           });
         }
+
+        var d = new Date();      
+        secs = d.getSeconds();
+        if (0 <= secs < 10){
+          val = getNumLiveUsers(5, "firstload")
+        } else if (10 <= secs < 20){
+          val = getNumLiveUsers(15, "firstload")
+        } else if (20 <= secs < 30){
+          val = getNumLiveUsers(25, "firstload")
+        } else if (30 <= secs < 40){
+          val = getNumLiveUsers(35, "firstload")
+        } else if (40 <= secs < 50){
+          val = getNumLiveUsers(45, "firstload")
+        } else if (50 <= secs){
+          val = getNumLiveUsers(55, "firstload")
+        }
+
       });
     </script>
   </body>
