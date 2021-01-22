@@ -12,6 +12,7 @@
     <script defer src="/__/firebase/8.2.4/firebase-analytics.js"></script>
     <script defer src="/__/firebase/8.2.4/firebase-performance.js"></script>
     <script defer src="/__/firebase/init.js"></script>
+    <script defer src="/script.js"></script>
 
     <style media="screen">
       body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -33,23 +34,20 @@
       <h2>Welcome</h2>
       <h1>SawThis.Today</h1>
       <p>By George Shao and Justin Gu. Thanks for reading our yearbook quotes!</p>
-      <p><b id="live">0 people</b> see this right now</p>
-      <p><b id="today">0 people</b> saw this today</p>
-      <p><b id="total">0 people</b> saw this in total</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Show/Hide Visitor List</a>
+      <p><b id="counter-live">0 people</b> see this right now</p>
+      <p><b id="counter-today">0 people</b> saw this today</p>
+      <p><b id="counter-total">0 people</b> saw this in total</p>
+      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Show / Hide Visitor List</a>
     </div>
     <p id="load">Loading...</p>
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
-        
-        firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        firebase.analytics();
-        firebase.performance();
-
         try {
-          let app = firebase.app();
+          firebase.app();
+          firebase.analytics();
+          firebase.performance();
           loadEl.textContent = `Database successfully loaded.`;
         } catch (e) {
           console.error(e);
