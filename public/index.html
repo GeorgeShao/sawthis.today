@@ -76,7 +76,7 @@
             writeUserData(getCookie("userID"), secs)
           }
           if (secs == 5 || secs == 15 || secs == 25 || secs == 35 || secs == 45 || secs == 55){
-            getNumLiveUsers(secs);
+            getNumLiveUsers(secs, "typicalload");
           }
           console.log(secs)
         }, 1000);
@@ -102,7 +102,7 @@
               console.log("num live users:" + (parseInt(snapshot.numChildren()) + 1));
               live_counter = document.getElementById('counter-live');
               live_counter.textContent = (parseInt(snapshot.numChildren()) + 1) + " people";
-            } else {
+            } else if (loadtype == "typicalload") {
               console.log("num live users:" + snapshot.numChildren());
               live_counter = document.getElementById('counter-live');
               live_counter.textContent = snapshot.numChildren() + " people";
