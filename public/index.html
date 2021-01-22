@@ -6,13 +6,12 @@
     <title>SawThis.Today</title>
 
     <!-- update the version number as needed -->
-    <script defer src="/__/firebase/8.2.4/firebase-app.js"></script>
+    <script src="/__/firebase/8.2.4/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/8.2.4/firebase-database.js"></script>
-    <script defer src="/__/firebase/8.2.4/firebase-analytics.js"></script>
-    <script defer src="/__/firebase/8.2.4/firebase-performance.js"></script>
-    <script defer src="/__/firebase/init.js"></script>
-    <script defer src="/script.js"></script>
+    <script src="/__/firebase/8.2.4/firebase-database.js"></script>
+    <script src="/__/firebase/8.2.4/firebase-analytics.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script src="/script.js"></script>
 
     <style media="screen">
       body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -44,16 +43,70 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
-        userID = Math.random();
+        userID = Math.floor((Math.random() * 1000000) + 1);
         document.cookie = "userID=" + userID;
         try {
           firebase.app();
           firebase.analytics();
-          firebase.performance();
           loadEl.textContent = `Database successfully loaded.`;
         } catch (e) {
           console.error(e);
           loadEl.textContent = 'Database failed to load.';
+        }
+
+        function getCookie(cname) {
+          var name = cname + "=";
+          var decodedCookie = decodeURIComponent(document.cookie);
+          var ca = decodedCookie.split(';');
+          for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+            }
+          }
+          return "";
+        }
+
+        var timerID = setInterval(function() {
+          var d = new Date();
+          hours = d.getHours();
+          mins = d.getMinutes();
+          secs = d.getSeconds();
+          if (secs == 0 || secs == 10 || secs == 20 || secs == 30 || secs == 40 || secs == 50){
+            writeUserData(getCookie("userID"), secs)
+          }
+          if (secs == 5 || secs == 15 || secs == 25 || secs == 35 || secs == 45 || secs == 55){
+            getNumLiveUsers(secs)
+          }
+          console.log(secs)
+        }, 1000);
+
+        function writeUserData(userID, secs1) {
+          var d = new Date();
+          d.setSeconds(secs1);
+          d = d.toGMTString();
+          console.log(d + "-write")
+          var postListRef = firebase.database().ref('live/' + d)
+          var newPostRef = postListRef.push();
+          newPostRef.set({
+            userID: userID
+          });
+        }
+
+        function getNumLiveUsers(secs1) {
+          var d = new Date();
+          d.setSeconds(secs1-5);
+          d = d.toGMTString();
+          console.log(d + "-read")
+          var ref = firebase.database().ref("live/" + d);
+          ref.once("value").then(function(snapshot) {
+            console.log("num live users:" + snapshot.numChildren());
+            live_counter = document.getElementById('counter-live');
+            live_counter.textContent = snapshot.numChildren();
+          });
         }
       });
     </script>
