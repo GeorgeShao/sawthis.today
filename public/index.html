@@ -35,17 +35,17 @@
 
   </head>
   <body>
-    <div id="message">
+    <div id="message" style="padding-bottom: 20px">
       <h2>Welcome</h2>
       <h1>SawThis.Today</h1>
       <p>By George Shao and Justin Gu. Thanks for reading our yearbook quotes!</p>
       <p><b id="counter-live">0 people</b> see this right now</p>
       <p><b id="counter-today">0 people</b> saw this today</p>
       <p><b id="counter-total">0 people</b> saw this in total</p>
-      <a target="_blank" role="button" onclick="show_hide()">Show / Hide Visitor List</a>
+      <a target="_blank" role="button" onclick="show_hide()" id="showhidevisitorlistbutton">Show Visitor List</a>
       <!--<button class="btn btn-primary" onclick="show_hide()">Show / Hide Visitor List</button>-->
 
-      <table class="table" id="visitorlist">
+      <table class="table" id="visitorlist" style="display:none;">
         <thead>
           <tr>
             <th scope="col">ID#</th>
@@ -53,7 +53,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr id="visitortableitem">
+          <tr>
             <td scope="row">69420</th>
             <td scope="row">Fri, 69 Jan 4200 69:69:69 GMT</td>
           </tr>
@@ -67,12 +67,17 @@
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
 
-        if (document.cookie.indexOf('userID=') == -1){
-          userID = Math.floor((Math.random() * 1000000000) + 1);
-          document.cookie = "userID=" + userID + "; expires=Wed, 31 Dec 2200 12:00:00 UTC";
+        function randomIntFromInterval(min, max) {
+          return Math.floor(Math.random() * (max - min + 1) + min);
         }
 
-        var visitor_dict = {};
+        if (document.cookie.indexOf('userID=') == -1){
+          userID = randomIntFromInterval(1000, 9999);
+          document.cookie = "userID=" + userID + "; expires=Wed, 31 Dec 2200 12:00:00 UTC";
+        } else if (getCookie("userID").length > 4){
+          userID = randomIntFromInterval(1000, 9999);
+          document.cookie = "userID=" + userID + "; expires=Wed, 31 Dec 2200 12:00:00 UTC";
+        }
 
         try {
           firebase.app();
@@ -174,10 +179,15 @@
           ref.once("value").then(function(snapshot) {
             snapshot.forEach(function(child) {
               console.log(child.key + ": " + child.val());
-              visitor_dict[child.key] == child.val();
-              let clone = document.querySelector('#visitortableitem').cloneNode(true);
-              clone.setAttribute('id', "");
-              document.querySelector('visitorlist').appendChild(clone);
+              var table = document.getElementById("visitorlist");
+              var row = table.insertRow(1);
+              var cell1 = row.insertCell(0);
+              var cell2 = row.insertCell(1);
+              cell1.innerHTML = child.val();
+              d = new Date(parseInt(child.key))
+              d = d.toGMTString();
+              console.error(d)
+              cell2.innerHTML = d;
             });
           });
         }
@@ -227,21 +237,15 @@
 
       });
 
-      var a;
-      function show_hide()
-      {
-          if(a==1)
-            {
-              document.getElementById("visitorlist").style.display="none";
-              return a=0;
-            }
-          else
-            {
-              document.getElementById("visitorlist").style.display="inline"
-              return a=1;
-            }
-
-
+      function show_hide() {
+        if(document.getElementById("visitorlist").style.display=="table"){
+          document.getElementById("visitorlist").style.display="none";
+          document.getElementById("showhidevisitorlistbutton").textContent="Show Visitor List"
+        } else {
+          document.getElementById("visitorlist").style.display="table";
+          document.getElementById("visitorlist").style.marginTop="5%";
+          document.getElementById("showhidevisitorlistbutton").textContent="Hide Visitor List"
+        }
       }
     
     </script>
