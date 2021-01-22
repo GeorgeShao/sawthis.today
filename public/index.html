@@ -71,7 +71,7 @@
           return "";
         }
         
-        var timerID = setInterval(function() {
+        var timerID_0 = setInterval(function() {
           var d = new Date();
           secs = d.getSeconds();
           if (secs == 0 || secs == 10 || secs == 20 || secs == 30 || secs == 40 || secs == 50){
@@ -83,11 +83,11 @@
           console.log(secs)
         }, 1000);
 
-        var timerID = setInterval(function() {
+        var timerID_1 = setInterval(function() {
           getNumDailyUsers()
         }, 10000);
 
-        var timerID = setInterval(function() {
+        var timerID_2 = setInterval(function() {
           getNumTotalUsers()
         }, 10000);
 
@@ -119,9 +119,7 @@
 
         function getNumDailyUsers() {
           var d = new Date();
-          d.setHours(0);
-          d.setMinutes(0);
-          d.setSeconds(0);
+          d.setUTCHours(0,0,0,0);
           d = d.toGMTString();
           console.log(d + "-read-today")
           var ref = firebase.database().ref("daily/" + d);
@@ -166,9 +164,7 @@
         }
         
         var d = new Date();
-        d.setHours(0);
-        d.setMinutes(0);
-        d.setSeconds(0);
+        d.setUTCHours(0,0,0,0);
         d = d.toGMTString();
         console.log(d + "-write-today")
         var ref = firebase.database().ref('daily/' + d).update({
