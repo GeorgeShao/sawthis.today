@@ -42,8 +42,10 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
-        userID = Math.floor((Math.random() * 1000000) + 1);
-        document.cookie = "userID=" + userID;
+        if (document.cookie.indexOf('userID=') == -1){
+          userID = Math.floor((Math.random() * 1000000) + 1);
+          document.cookie = "userID=" + userID + "; expires=Wed, 31 Dec 2200 12:00:00 UTC";
+        }
         try {
           firebase.app();
           firebase.analytics();
@@ -81,11 +83,15 @@
           console.log(secs)
         }, 1000);
 
+        var timerID = setInterval(function() {
+          getNumDailyUsers("typicalload")
+        }, 10000);
+
         function writeUserLiveData(userID, secs1) {
           var d = new Date();
           d.setSeconds(secs1);
           d = d.toGMTString();
-          console.log(d + "-write")
+          console.log(d + "-write-live")
           firebase.database().ref('live/' + d).update({
             [userID]: 0
           });
@@ -95,7 +101,7 @@
           var d = new Date();
           d.setSeconds(secs1-5);
           d = d.toGMTString();
-          console.log(d + "-read")
+          console.log(d + "-read-live")
           var ref = firebase.database().ref("live/" + d);
           ref.once("value").then(function(snapshot) {
             if (loadtype == "firstload"){
@@ -106,6 +112,27 @@
               console.log("num live users:" + snapshot.numChildren());
               live_counter = document.getElementById('counter-live');
               live_counter.textContent = snapshot.numChildren() + " people";
+            }
+          });
+        }
+
+        function getNumDailyUsers(loadtype) {
+          var d = new Date();
+          d.setHours(0);
+          d.setMinutes(0);
+          d.setSeconds(0);
+          d = d.toGMTString();
+          console.log(d + "-read-today")
+          var ref = firebase.database().ref("daily/" + d);
+          ref.once("value").then(function(snapshot) {
+            if (loadtype == "firstload"){
+              console.log("num today users:" + (parseInt(snapshot.numChildren()) + 1));
+              today_counter = document.getElementById('counter-today');
+              today_counter.textContent = (parseInt(snapshot.numChildren()) + 1) + " people";
+            } else if (loadtype == "typicalload") {
+              console.log("num today users:" + snapshot.numChildren());
+              today_counter = document.getElementById('counter-today');
+              today_counter.textContent = snapshot.numChildren() + " people";
             }
           });
         }
@@ -125,10 +152,17 @@
         } else if (50 <= secs){
           val = getNumLiveUsers(55, "firstload")
         }
-
-        // var postListRef = firebase.database().ref('live/' + d).update({
-        //   [userID]: 0
-        // });
+        
+        var d = new Date();
+        d.setHours(0);
+        d.setMinutes(0);
+        d.setSeconds(0);
+        d = d.toGMTString();
+        console.log(d + "-write-today")
+        var ref = firebase.database().ref('daily/' + d).update({
+          [getCookie("userID")]: 0
+        });
+        getNumDailyUsers("firstload")
 
       });
     </script>
