@@ -86,7 +86,7 @@
           d.setSeconds(secs1);
           d = d.toGMTString();
           console.log(d + "-write")
-          var postListRef = firebase.database().ref('live/' + d).update({
+          firebase.database().ref('live/' + d).update({
             [userID]: 0
           });
         }
@@ -125,6 +125,10 @@
         } else if (50 <= secs){
           val = getNumLiveUsers(55, "firstload")
         }
+
+        // var postListRef = firebase.database().ref('live/' + d).update({
+        //   [userID]: 0
+        // });
 
       });
     </script>
