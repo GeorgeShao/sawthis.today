@@ -43,7 +43,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
         if (document.cookie.indexOf('userID=') == -1){
-          userID = Math.floor((Math.random() * 1000000) + 1);
+          userID = Math.floor((Math.random() * 1000000000) + 1);
           document.cookie = "userID=" + userID + "; expires=Wed, 31 Dec 2200 12:00:00 UTC";
         }
         try {
