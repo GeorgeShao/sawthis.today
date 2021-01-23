@@ -222,9 +222,8 @@
         });
         getNumTotalUsers()
         
-        // console.log("current unix time: " + Date.now())
-        // firebase.database().ref('visitorlist/' + Date.now()).set(getCookie("userID"));
-        // getVisitorList();
+        console.log("current unix time: " + Date.now())
+        firebase.database().ref('visitorlist/' + Date.now()).set(getCookie("userID"));
         
         setTimeout(function(){
           var visitorlistlistenerref = firebase.database().ref('visitorlist');
