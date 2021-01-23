@@ -225,20 +225,27 @@
         console.log("current unix time: " + Date.now())
         firebase.database().ref('visitorlist/' + Date.now()).set(getCookie("userID"));
         getVisitorList();
-
-        var visitorlistlistenerref = firebase.database().ref('visitorlist');
-        visitorlistlistenerref.on('child_added', (child) => {
-          console.log(child.key + ": " + child.val());
-          var table = document.getElementById("visitorlist");
-          var row = table.insertRow(1);
-          var cell1 = row.insertCell(0);
-          var cell2 = row.insertCell(1);
-          cell1.innerHTML = child.val();
-          d = new Date(parseInt(child.key))
-          d = d.toString();
-          d = d.substring(0,d.indexOf("GMT")-1)
-          cell2.innerHTML = d;
-        });
+        
+        setTimeout(function(){
+          var visitorlistlistenerref = firebase.database().ref('visitorlist');
+          var firstloadafterreloadduplicatechecked = false;
+          visitorlistlistenerref.on('child_added', (child) => {
+            if (performance.getEntriesByType('navigation')[0].type == 'navigate' || firstloadafterreloadduplicatechecked == true){
+              console.log(child.key + ": " + child.val());
+              var table = document.getElementById("visitorlist");
+              var row = table.insertRow(1);
+              var cell1 = row.insertCell(0);
+              var cell2 = row.insertCell(1);
+              cell1.innerHTML = child.val();
+              d = new Date(parseInt(child.key))
+              d = d.toString();
+              d = d.substring(0,d.indexOf("GMT")-1)
+              cell2.innerHTML = d;
+            } else {
+              firstloadafterreloadduplicatechecked == true;
+            }
+          });
+        }, 1000);
 
       });
 
