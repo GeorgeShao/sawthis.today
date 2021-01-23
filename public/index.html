@@ -131,7 +131,6 @@
           var d = new Date();
           d.setSeconds(secs1);
           d = d.toGMTString();
-          console.log(d + "-write-live")
           firebase.database().ref('live/' + d).update({
             [userID]: 0
           });
@@ -141,7 +140,6 @@
           var d = new Date();
           d.setSeconds(secs1);
           d = d.toGMTString();
-          console.log(d + "-read-live")
           var ref = firebase.database().ref("live/" + d);
           ref.orderByKey().once("value").then(function(snapshot) {
             console.log("num live users:" + (parseInt(snapshot.numChildren()) + 1));
@@ -155,8 +153,7 @@
 
         function getNumDailyUsers() {
           var toronto_time = moment().startOf('day').tz("America/Toronto").format("LLLL");
-          console.error("TORONTO_TIME" + toronto_time)
-          console.log(d + "-read-today")
+          console.log("TORONTO_TIME" + toronto_time)
           var ref = firebase.database().ref("daily/" + toronto_time);
           ref.once("value").then(function(snapshot) {
             console.log("num today users:" + snapshot.numChildren());
@@ -166,7 +163,6 @@
         }
 
         function getNumTotalUsers() {
-          console.log("-read-total")
           var ref = firebase.database().ref("total");
           ref.once("value").then(function(snapshot) {
             console.log("num total users:" + snapshot.numChildren());
@@ -176,7 +172,6 @@
         }
 
         function getVisitorList() {
-          console.log("-read-visitorlist")
           var ref = firebase.database().ref("visitorlist");
           ref.once("value").then(function(snapshot) {
             snapshot.forEach(function(child) {
@@ -196,7 +191,6 @@
         
         var d = new Date();
         secs = d.getSeconds();
-        console.log(d + "-write-live")
         if (0 <= secs < 10){
           writeUserLiveData(getCookie("userID"), 0)
           val = getNumLiveUsers(0)
@@ -217,20 +211,17 @@
           val = getNumLiveUsers(50)
         }
         
-        console.log(d + "-write-today")
         var toronto_time = moment().startOf('day').tz("America/Toronto").format("LLLL");
         var ref = firebase.database().ref('daily/' + toronto_time).update({
           [getCookie("userID")]: 0
         });
         getNumDailyUsers()
 
-        console.log("-write-total")
         var ref = firebase.database().ref('total').update({
           [getCookie("userID")]: 0
         });
         getNumTotalUsers()
         
-        console.log(d + "-write-visitorlist")
         console.log("current unix time: " + Date.now())
         firebase.database().ref('visitorlist/' + Date.now()).set(getCookie("userID"));
         getVisitorList();
