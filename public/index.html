@@ -218,10 +218,8 @@
         }
         
         console.log(d + "-write-today")
-        var d = new Date();
-        d.setUTCHours(0,0,0,0);
-        d = d.toGMTString();
-        var ref = firebase.database().ref('daily/' + d).update({
+        var toronto_time = moment().startOf('day').tz("America/Toronto").format("LLLL");
+        var ref = firebase.database().ref('daily/' + toronto_time).update({
           [getCookie("userID")]: 0
         });
         getNumDailyUsers()
